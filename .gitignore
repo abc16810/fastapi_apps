@@ -8,3 +8,4 @@ db.sqlite3
 *.so
 __pycache__
 *.log
+.env
