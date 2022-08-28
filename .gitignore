@@ -1,0 +1,10 @@
+*.py[cod]
+.idea
+test.py
+.DS_Store
+.vscode
+db.sqlite3
+# C extensions
+*.so
+__pycache__
+*.log
