@@ -1,6 +1,6 @@
-from aioredis import Redis
 from fastapi import FastAPI, Depends
 from starlette.middleware.base import BaseHTTPMiddleware
+
 from conf.config import get_app_settings
 from .authen import authenticate
 from .login import router as login_router
@@ -16,8 +16,9 @@ admin_api = FastAPIAdmins(description="后台管理",
                           title="MyAdmin",
                           )
 
+
 @router.get("/")
-async def info(settings = Depends(get_app_settings)):
+async def info(settings=Depends(get_app_settings)):
     return {
         "app_name": settings.title,
     }

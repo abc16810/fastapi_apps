@@ -7,6 +7,7 @@ from .constants import access_token, LOGIN_USER, LOGIN_PATH
 from admin.models import Admin
 from fastapi.logger import logger
 
+
 async def authenticate(
         request: Request,
         call_next: RequestResponseEndpoint,

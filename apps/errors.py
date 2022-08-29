@@ -38,3 +38,7 @@ async def http422_error_handler(
         {"errors": exc.errors()},
         status_code=HTTP_422_UNPROCESSABLE_ENTITY,
     )
+
+
+class EntityDoesNotExist(Exception):
+    """Raised when entity was not found in database."""

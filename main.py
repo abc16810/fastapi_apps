@@ -55,7 +55,7 @@ def get_application() -> FastAPI:
                                   'host': settings.mysql_dict.mysql_host,
                                   'port': settings.mysql_dict.mysql_port,
                                   'user': settings.mysql_dict.mysql_user,
-                                  'password': settings.mysql_dict.mysql_passwd,
+                                  'password': settings.mysql_dict.mysql_password,
                                   'database': settings.mysql_dict.mysql_db
                               }
                           }

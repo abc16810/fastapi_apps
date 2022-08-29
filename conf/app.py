@@ -1,5 +1,5 @@
-#coding: utf-8
-from pydantic import BaseSettings, RedisDsn, AnyUrl, BaseModel
+# coding: utf-8
+from pydantic import BaseSettings, RedisDsn, AnyUrl, BaseModel, SecretStr
 from typing import Dict, Any, List, Optional
 
 
@@ -7,7 +7,7 @@ class MysqlModel(BaseModel):
     mysql_host: str = 'localhost'
     mysql_port: int = 3306
     mysql_user: str = 'root'
-    mysql_passwd: str = 'xxx'
+    mysql_password: str = 'xxx'
     mysql_db: str = 'xx'
 
 
@@ -22,9 +22,10 @@ class AppSettings(BaseSettings):
     docs_url: str = "/docs"
     redoc_url: str = "/redoc"
 
+    secret_key: SecretStr   # openssl rand -hex 32
+
     redis_dsn: RedisDsn
     mysql_dict: MysqlModel = MysqlModel()
-
 
     allowed_hosts: List[str] = ["*"]
     api_prefix: str = "/api"
@@ -32,7 +33,7 @@ class AppSettings(BaseSettings):
     api_manager_prefix: str = "/admin"
 
     class Config:
-        validate_assignment = True   # 是否对属性赋值进行验证
+        validate_assignment = True  # 是否对属性赋值进行验证
         fields = {
             'redis_dsn': {
                 'env': ['service_redis_dsn', 'redis_url']
@@ -41,7 +42,7 @@ class AppSettings(BaseSettings):
                 'env': ['service_mysql_dict', 'mysql_params']
             }
         }
-        env_file = ".env"   # python-dotenv
+        env_file = ".env"  # python-dotenv
         env_file_encoding = 'utf-8'
 
     @property

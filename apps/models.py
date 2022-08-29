@@ -6,7 +6,7 @@ import datetime
 class AbstractUser(Model):
     username = fields.CharField(max_length=50, unique=True)
     password = fields.CharField(max_length=200)
-    email = fields.CharField(max_length=200, default="")
+    email = fields.CharField(max_length=200, default="", unique=True)
 
     class Meta:
         abstract = True
@@ -29,9 +29,12 @@ class Users(AbstractUser):
             return f"{self.name}".strip()
         return self.username
 
-    class PydanticMeta:
-        computed = ["full_name"]
+    def token(self) -> str:
+        return self.username
 
+    class PydanticMeta:
+        # computed = ["token"]
+        exclude = ("password", )
 
     def __str__(self):
         return f"{self.pk}#{self.username}"
@@ -39,4 +42,8 @@ class Users(AbstractUser):
 
 User_Pydantic = pydantic_model_creator(Users, name="User")
 # UserIn_Pydantic = pydantic_model_creator(Users, name="UserIn", exclude_readonly=True, exclude=("last_login", ))
-UserCreate_Pydantic = pydantic_model_creator(Users, name="UserCreate", exclude_readonly=True, exclude=("last_login", ))
+UserTokenResponse = pydantic_model_creator(Users,
+                                             name="UserCreate",
+                                             include=("username", "email", "avatar"),
+                                             computed=("token", )
+                                             )

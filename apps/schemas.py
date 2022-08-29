@@ -1,12 +1,13 @@
 from pydantic import BaseModel, EmailStr, validator
 from typing import Union
+from datetime import datetime
 import re
 
 
 def validator_username_email(value: Union[EmailStr, str]) -> Union[EmailStr, str]:
-    if  isinstance(value, str):
-        if not value or len(value) < 6 or len(value) >30:
-            raise ValueError("Name length must be > 6")
+    if isinstance(value, str):
+        if not value or len(value) < 3 or len(value) >30:
+            raise ValueError("Name length must be > 3")
         if not re.match('^[a-zA-Z]', value):
             raise ValueError("username must start with a letter")
             value = value.strip()
@@ -21,6 +22,7 @@ class UserInLogin(BaseModel):
     password: str
     _normalize_name = validator('username_email', allow_reuse=True)(validator_username_email)
 
+
 class UserInCreate(BaseModel):
     email: EmailStr
     username: str
@@ -34,6 +36,16 @@ class UserInCreate(BaseModel):
         if v and len(v) < 6:
             raise ValueError("password length must be > 6")
         return v
+
+
+# JWT
+class JWTModel(BaseModel):
+    exp: datetime
+    sub: str
+
+
+class JWTUser(BaseModel):
+    username: str
 
 
 
