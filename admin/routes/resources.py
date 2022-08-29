@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Depends
-from config import Settings
-from utils import get_settings
+from conf.config import get_app_settings
 
 
 router = APIRouter()
@@ -8,7 +7,7 @@ router = APIRouter()
 
 
 @router.get("/info")
-async def info(settings: Settings = Depends(get_settings)):
+async def info(settings = Depends(get_app_settings)):
     return {
         "app_name": settings.app_name,
         "author": settings.author,

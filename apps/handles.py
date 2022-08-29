@@ -1,9 +1,18 @@
 from dataclasses import dataclass, field
 from fastapi import Body, UploadFile, File, HTTPException
 import re
+from datetime import datetime
+from pydantic import BaseModel, ValidationError, validator, Field
 from types import DynamicClassAttribute
-from typing import Dict
+from typing import Dict, Optional, List
 from enum import Enum
+import os
+from pathlib import Path
+
+
+# 文件上传路径
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UPLOAD_DIR = Path(BASE_DIR, "./uploads")
 
 
 ALLOW_MEDIA_TYPE = {'image/tiff; application=geotiff': 'tif', 'image/png': 'png',  'text/plain': 'txt',
@@ -88,6 +97,27 @@ class UploadFileParam(DefaultDependency):
             raise HTTPException(detail="Invalid media type", status_code=200)
         else:
             self.kwargs['prefix'] = ALLOW_MEDIA_TYPE.get(file.content_type)
+
+
+
+class User(BaseModel):
+    """pydantic test"""
+    id: int
+    name: str = Field(..., title="名称", max_length=10, min_length=5)
+    signup_ts: Optional[datetime] = None
+    friends: List[int] = []
+    ts: datetime = None
+
+    @validator("name", each_item=True)
+    def validator_name(cls, v):
+        if v and len(v) < 6:
+            raise ValueError("Name length must be > 6")
+        return v
+
+    @validator('ts', pre=True, always=True)
+    def set_ts_now(cls, v):
+        return v or datetime.now()
+
 
 
 

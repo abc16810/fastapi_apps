@@ -4,7 +4,7 @@ from starlette.status import HTTP_401_UNAUTHORIZED
 
 
 def get_redis(request: Request):
-    return request.app.redis
+    return request.app.state.redis
 
 
 def get_current_admin(request: Request):

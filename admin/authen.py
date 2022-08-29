@@ -11,7 +11,7 @@ async def authenticate(
         request: Request,
         call_next: RequestResponseEndpoint,
 ):
-    redis = request.app.redis  # type:Redis
+    redis = request.app.state.redis  # type:Redis
     token = request.cookies.get(access_token)
     path = request.scope["path"]
     admin = None

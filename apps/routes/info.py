@@ -1,31 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Body
-from typing import Union, List
-from functools import lru_cache
-from pathlib import Path
 import aiofiles
-from .handles import UploadFileParam
 import os
-from config import Settings
+from fastapi import APIRouter, Depends, File
+from pathlib import Path
+from typing import List
 
-router = APIRouter(prefix="/api",
-                   tags=["API"],                                  # 前端显示tag
-                   # dependencies=[],                             # 当前全局依赖
-                   responses={404: {"msg": "Not founds"}}  # 当请求不匹配（不存在）的uri时提示404
-                   )
-# 文件上传路径
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-UPLOAD_DIR = Path(BASE_DIR, "./uploads")
+from apps.handles import UploadFileParam, User, UPLOAD_DIR
+from conf.config import get_app_settings
 
-
-@lru_cache()
-def get_settings():
-    return Settings()
+router = APIRouter()
 
 
 @router.get("/info")
-async def info(settings: Settings = Depends(get_settings)):
+async def info(settings = Depends(get_app_settings)):
     return {
-        "app_name": settings.app_name,
+        "app_name": settings.title,
         "author": settings.author,
         "development_time": settings.development_time,
     }
@@ -55,7 +43,14 @@ async def create_upload_file(params=Depends(UploadFileParam)):
     return {
         'code': 1,
         'chunk': f'{identifier}_{num}.{prefix}'
-            }
+    }
+
+
+@router.post("/user")
+async  def get_user(item: User):
+    return item
+
+
 
 
 
