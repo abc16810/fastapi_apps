@@ -3,7 +3,7 @@ from typing import Dict, Union
 from apps.models import Users
 from datetime import datetime, timedelta
 from apps.schemas import JWTModel, JWTUser
-
+from fastapi.security import APIKeyHeader
 
 JWT_SUBJECT = "access"
 ALGORITHM = "HS256"
