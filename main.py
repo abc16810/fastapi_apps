@@ -56,7 +56,8 @@ def get_application() -> FastAPI:
                                   'port': settings.mysql_dict.mysql_port,
                                   'user': settings.mysql_dict.mysql_user,
                                   'password': settings.mysql_dict.mysql_password,
-                                  'database': settings.mysql_dict.mysql_db
+                                  'database': settings.mysql_dict.mysql_db,
+                                  'connect_timeout': 10,
                               }
                           }
                           },
@@ -69,6 +70,7 @@ def get_application() -> FastAPI:
                       },
                       generate_schemas=True,
                       add_exception_handlers=True,
+
                       )
 
     application.mount(settings.api_manager_prefix, admin_api,)

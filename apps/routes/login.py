@@ -1,11 +1,11 @@
 from fastapi import Body
 from fastapi import APIRouter, Body, Depends, HTTPException
 from conf.config import get_app_settings
-from apps.models import User_Pydantic, UserTokenResponse, Users
+from apps.models import User_Pydantic, UserTokenResponse, Users, UserName
 from conf import constants
 from apps.schemas import UserInCreate
 from apps.jwt import create_access_token_for_user
-from starlette.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST, HTTP_500_INTERNAL_SERVER_ERROR
 
 
 router = APIRouter()
@@ -44,3 +44,14 @@ async def register(
         )
 
 
+@router.post("/test",status_code=HTTP_201_CREATED,
+             name="aaa",
+             summary="注册")
+async def test(user: UserName = Body(..., embed=True, alias="user")):
+    info = user.dict()
+    info['password'] = "123456"
+    try:
+        await Users.create(**info)
+    except Exception as err:
+        raise HTTPException(detail="%s" % str(err), status_code=HTTP_500_INTERNAL_SERVER_ERROR)
+    return user.dict()

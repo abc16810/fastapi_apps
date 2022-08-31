@@ -1,4 +1,4 @@
-from .models import Users, Team, Hero, UserCreate
+from .models import Users, Team, Hero, UserCreate, UserRead, UserUpdate
 from sqlmodel import SQLModel, Session
 from .database import engine
 

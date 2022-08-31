@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
+from fastapi import HTTPException
+from .auth import get_current_user_authorizer
 from sqlmodel import Session
 from apps.db import *
 
@@ -25,12 +27,41 @@ async def create_hero(user: UserCreate, session: Session = Depends(get_session))
     return JSONResponse({"detail": "success"}, status_code=200)
 
 
+@router.get("/users/{user_id}", response_model=UserRead)
+async def get_user(user_id: int, session: Session = Depends(get_session)):
+    user = session.get(Users, user_id)  # one
+    if not user:
+        raise HTTPException(status_code=404, detail="Hero not found")
+    return user
 
 
-# @app.get("/heroes/{hero_id}", response_model=HeroRead)
-# def read_hero(hero_id: int):
-#     with Session(engine) as session:
-#         hero = session.get(Hero, hero_id)
-#         if not hero:
-#             raise HTTPException(status_code=404, detail="Hero not found")
-#         return hero
+@router.patch("/users/{user_id}", response_model=UserRead)
+async def update_user(
+user_id: int,
+u: UserUpdate,
+    session: Session = Depends(get_session)
+
+):
+    db_user = session.get(Users, user_id)
+    if not db_user:
+        raise HTTPException(status_code=404, detail="Team not found")
+    user_data = u.dict(exclude_unset=True)
+    for key, value in user_data.items():
+        setattr(db_user, key, value)
+    try:
+        session.add(db_user)
+        await session.commit()
+        await session.refresh(db_user)
+        return db_user
+    except Exception as err:
+        print(err)
+
+
+@router.delete("/users/{user_id}")
+def delete_team(*, session: Session = Depends(get_session), user_id: int):
+    user = session.get(Users, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Team not found")
+    session.delete(user)
+    session.commit()
+    return {"ok": True}

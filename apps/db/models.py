@@ -5,6 +5,7 @@ from typing import List
 from typing import Optional
 
 
+# table=True 表模型，如果表不存在则创建表
 class Users(SQLModel, table=True):
     __tablename__ = "users_test"
 
@@ -33,6 +34,19 @@ class UserCreate(SQLModel):
         if v and len(v) < 6:
             raise ValueError("password length must be > 6")
         return v
+
+class UserRead(SQLModel):
+    last_login: datetime
+    avatar: str
+    is_active: bool = True
+    username: str
+    email: EmailStr
+    id: int
+
+
+class UserUpdate(SQLModel):
+    username: str
+
 
 
 class Team(SQLModel, table=True):
