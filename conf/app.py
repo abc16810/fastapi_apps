@@ -32,6 +32,8 @@ class AppSettings(BaseSettings):
 
     api_manager_prefix: str = "/admin"
 
+    jwt_token_prefix: str = "Token"
+
     class Config:
         validate_assignment = True  # 是否对属性赋值进行验证
         fields = {

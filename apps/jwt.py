@@ -1,6 +1,7 @@
 from jose import JWTError, jwt
 from typing import Dict, Union
 from apps.models import Users
+from pydantic import ValidationError
 from datetime import datetime, timedelta
 from apps.schemas import JWTModel, JWTUser
 from fastapi.security import APIKeyHeader
@@ -32,6 +33,17 @@ def create_access_token_for_user(user: Users, secret_key: str) -> str:
         secret_key=secret_key,
         expires_delta=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     )
+
+
+def get_username_from_token(token: str, secret_key: str) -> str:
+    try:
+        res = JWTUser(**jwt.decode(token, secret_key, algorithms=[ALGORITHM]))
+        print(res)
+        return res.username
+    except JWTError as decode_error:
+        raise ValueError("unable to decode JWT token") from decode_error
+    except ValidationError as validation_error:
+        raise ValueError("malformed payload in token") from validation_error
 
 
 
